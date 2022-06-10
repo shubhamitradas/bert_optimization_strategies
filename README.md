@@ -70,4 +70,7 @@ However, the reason that the activations are stored in the first place is that t
 Mixed-precision training is a technique for substantially reducing neural net training time by performing as many operations as possible in half-precision floating point, fp16, instead of the (PyTorch default) single-precision floating point, fp32. 
 
 The basic idea behind mixed precision training is simple: halve the precision (fp32 → fp16), halve the training time.
+
+A master copy of the weights is stored in FP32. This is converted into FP16 during part of each training iteration (one forward pass, back-propagation and weight update). 
+At the end of the iteration, the weight gradients are used to update the master weights during the optimizer step.
     
