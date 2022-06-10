@@ -16,6 +16,8 @@ Here I tried some strategies which helped bring down the training time from ~35 
 
 **2. Using pin_memory.**
 
+    ![My Image](images/pinned-1024x541.jpeg)
+
    Set pin_memory as True in DataLoader. (DataLoader(dataset, pin_memory = True))
 
    If we load our samples in the Dataset on CPU and would like to push it during training to the GPU, we can speed up the host to device transfer by    enabling pin_memory.
