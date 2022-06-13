@@ -8,7 +8,20 @@ memory issues.
 
 CUDA out of memory errors or GPU Runtime Limit Reached errors are frequent whenever we train such models with a large batch or more epochs even with a shrinked version of the model such as DistillBert.
 
-Here I tried some strategies which helped bring down the training time from ~35 mins to ~7 mins on a single GPU(Tesla T4) machine for 1.5 Lac training data.
+Here I tried some strategies which helped bring down the training time from ~35 mins to ~10 mins on a single GPU(Tesla T4) machine for 1.5 Lac training data.
+
+Each method can improve speed or memory usage which is summarized in the table below:
+
+| Method.               | Speed.        | Memory|
+| --------------------- | ------------- |-------
+|Gradient accumulation  | No            | Yes
+|Gradient checkpointing | No            | Yes
+|Mixed precision training | Yes         | No
+|Batch Size | Yes         | No
+|DataLoader | Yes         | No
+
+
+
 
 
 ## 1. Using DataLoader to increase num_worker.
@@ -76,13 +89,23 @@ A master copy of the weights is stored in FP32. This is converted into FP16 duri
 At the end of the iteration, the weight gradients are used to update the master weights during the optimizer step.
     
 
+## TO DO
+## 6. Dynamic Padding + Smart Batching.
 
 
-References: [NVIDIA Blog](https://developer.nvidia.com/blog/how-optimize-data-transfers-cuda-cc/)
+![My Image](images/smart_batch.png)
+
+The main idea behind the 2 optimizations is to avoid as much unused computation as possible:
+
+**Dynamic padding**: We limit the number of added pad tokens to reach the length of the longest sequence of each mini batch instead of a fixed value set for the whole train set. Because the number of added tokens changes across mini batches, we call it “dynamic” padding.
+
+**Uniform length batching**: We push the logic further by generating batches made of similar length sequences, so we avoid extreme cases where most sequences in the mini batch are short and we are required to add lots of pad tokens to each of them because 1 sequence of the same mini batch is very long.
 
 
-            [Mixed Precision Training](https://docs.nvidia.com/deeplearning/performance/mixed-precision-training/index.html)
-
-            [velog.io](https://velog.io/@twinjuy/OOM%EB%A5%BC-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-Batch-Accumulation)
-             
-            [Optimal Gradient Checkpoint Search for Arbitrary Computation Graphs](https://paperswithcode.com/paper/cutting-down-training-memory-by-re-fowarding)
+References: [NVIDIA Blog](https://developer.nvidia.com/blog/how-optimize-data-transfers-cuda-cc/)\
+                                                                                                                                                                     [Mixed Precision Training](https://docs.nvidia.com/deeplearning/performance/mixed-precision-training/index.html)\
+            [Dynamic Padding](https://sajjjadayobi.github.io/blog/tips/2021/08/09/sortish-bathes.html)  
+            [Optimal Gradient Checkpoint Search for Arbitrary Computation Graphs](https://paperswithcode.com/paper/cutting-down-training-memory-by-re-fowarding)\
+            [Divide Training time](https://towardsdatascience.com/divide-hugging-face-transformers-training-time-by-2-or-more-21bf7129db9q-21bf7129db9e)\
+            [velog.io](https://velog.io/@twinjuy/OOM%EB%A5%BC-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-Batch-Accumulation)\
+        [How To Fit a Bigger Model and Train It Faster](https://huggingface.co/docs/transformers/performance#faster-training)
