@@ -8,7 +8,7 @@ memory issues.
 
 CUDA out of memory errors or GPU Runtime Limit Reached errors are frequent whenever we train such models with a large batch or more epochs even with a shrinked version of the model such as DistillBert.
 
-Here I tried some strategies which helped bring down the training time from ~35 mins to 10 mins on a single GPU machine for 1.5 Lac training data.
+Here I tried some strategies which helped bring down the training time from ~35 mins to ~7 mins on a single GPU(Tesla T4) machine for 1.5 Lac training data.
 
 
 ## 1. Using DataLoader to increase num_worker.
@@ -27,6 +27,7 @@ Here I tried some strategies which helped bring down the training time from ~35 
 
   ![My Image](images/pinned-1024x541.jpeg)
   
+  As seen in the figure, pinned memory is used as a staging area for transfers from the device to the host. We can avoid the cost of the transfer between pageable and pinned host arrays by directly allocating our host arrays in pinned memory.
   Pinned memory is used to speed up a CPU to GPU memory copy operation (as executed by e.g. tensor.cuda() in PyTorch) by ensuring that none of the memory that is to be copied is on disk. Memory cached to disk has to be read into RAM before it can be transferred to the GPU—e.g. it has to be copied twice.
   More information on the [NVIDIA Blog](https://developer.nvidia.com/blog/how-optimize-data-transfers-cuda-cc/)
   
@@ -74,3 +75,14 @@ The basic idea behind mixed precision training is simple: halve the precision (f
 A master copy of the weights is stored in FP32. This is converted into FP16 during part of each training iteration (one forward pass, back-propagation and weight update). 
 At the end of the iteration, the weight gradients are used to update the master weights during the optimizer step.
     
+
+
+
+References: [NVIDIA Blog](https://developer.nvidia.com/blog/how-optimize-data-transfers-cuda-cc/)
+
+
+            [Mixed Precision Training](https://docs.nvidia.com/deeplearning/performance/mixed-precision-training/index.html)
+
+            [velog.io](https://velog.io/@twinjuy/OOM%EB%A5%BC-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-Batch-Accumulation)
+             
+            [Optimal Gradient Checkpoint Search for Arbitrary Computation Graphs](https://paperswithcode.com/paper/cutting-down-training-memory-by-re-fowarding)
