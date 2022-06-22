@@ -21,6 +21,19 @@ Each method can improve speed or memory usage which is summarized in the table b
 |DataLoader | Yes         | No
 
 
+## Reports from wandb
+
+
+
+
+![My Image](images/W&B Chart 22_06_2022, 14_14_37.png)
+
+
+![My Image](images/W&B Chart 22_06_2022, 14_14_53.png)
+
+
+![My Image](images/W&B Chart 22_06_2022, 14_16_09.png)
+
 
 
 
