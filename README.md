@@ -26,13 +26,9 @@ Each method can improve speed or memory usage which is summarized in the table b
 
 
 
-![My Image](images/runtime.png)
+![My Image](images/report.png)
 
 
-![My Image](images/sample_per_sec.png)
-
-
-![My Image](images/f1.png)
 
 
 
