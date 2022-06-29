@@ -26,7 +26,7 @@ Each method can improve speed or memory usage which is summarized in the table b
 
 
 
-![My Image](images/report.png)
+![My Image](images/wandb_report.png)
 
 
 
