@@ -1,4 +1,4 @@
-# Optimzation strategies to speed up training.
+# Optimization strategies to speed up training.
 
     
   
